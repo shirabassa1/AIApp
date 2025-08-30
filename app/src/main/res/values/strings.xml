@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">AIApp</string>
+
+    <string-array name="cooker_options">
+        <item>beginner</item>
+        <item>expert</item>
+        <item>enthusiast</item>
+    </string-array>
+
+    <string-array name="recipe_types">
+        <item>simple</item>
+        <item>with few ingredients</item>
+        <item>fancy</item>
+    </string-array>
+
 </resources>

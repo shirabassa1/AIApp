@@ -43,9 +43,23 @@
         </LinearLayout>
 
         <EditText
+            android:id="@+id/etNumPeople"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Number of people"
+            android:inputType="number"/>
+
+        <EditText
+            android:id="@+id/etRecipe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Enter your desired dish"/>
+
+        <Button
+            android:id="@+id/btnGenerate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Generate"/>
 
     </LinearLayout>
 
