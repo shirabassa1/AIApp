@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
 {
     //I'm a _ cooker. I wanna make a _ for _ people. Send me a recipe - Make it _. Include the ingredients I need and the whole process.
+    private final String ERROR_FLAG = "False";
     private String prompt;
 
     private String[] cookerOptions;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     ArrayAdapter<String> adpCookerOptions, adpRecipeTypes;
 
-    private String cookerMode, recipeType;
+    private String cookerMode, recipeType, recipe, numPeople;
 
     private GeminiManager geminiManager;
 
@@ -82,6 +83,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View view)
             {
+                boolean error = false;
+
+                recipe = etRecipe.getText().toString();
+                numPeople = etNumPeople.getText().toString();
+
+                if (recipe.isEmpty())
+                {
+                    etRecipe.setError("Enter a recipe");
+                    error = true;
+                }
+
+                if (numPeople.isEmpty())
+                {
+                    etNumPeople.setError("Enter a number");
+                    error = true;
+                }
+
+                if (error)
+                {
+                    return;
+                }
+
                 prompt = createPrompt();
 
                 ProgressDialog pd = new ProgressDialog(MainActivity.this);
@@ -95,10 +118,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onSuccess(String result)
                     {
-                        tvRecipe.setText(result);
-                        pd.dismiss();
-                        tvRecipe.scrollTo(0, 0);
-                        tvRecipe.setVisibility(View.VISIBLE);
+                        if (result.equals(ERROR_FLAG + "\n"))
+                        {
+                            tvRecipe.setText("");
+                            tvRecipe.setVisibility(View.GONE);
+                            pd.dismiss();
+                            etRecipe.setError("Not a valid recipe");
+                        }
+                        else
+                        {
+                            tvRecipe.setText(result);
+                            pd.dismiss();
+                            tvRecipe.scrollTo(0, 0);
+                            tvRecipe.setVisibility(View.VISIBLE);
+                        }
                     }
 
                     @Override
@@ -115,11 +148,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String createPrompt()
     {
         return "I'm a " + cookerMode + " cooker. " +
-                "I wanna make a " + etRecipe.getText().toString() + " " +
-                "for " + etNumPeople.getText().toString() + " people. " +
+                "I wanna make a " + recipe + " " +
+                "for " + numPeople + " people. " +
                 "Send me a recipe - " +
                 "Make it " + recipeType + ". " +
-                "Include the ingredients I need and the whole process.";
+                "Include the ingredients I need and the whole process." +
+                "If " + recipe + " is not a valid dish name send me the word '" + ERROR_FLAG + "'";
 }
 
 @Override

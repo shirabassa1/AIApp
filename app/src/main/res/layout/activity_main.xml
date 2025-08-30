@@ -22,13 +22,14 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:layout_marginVertical="20dp">
+        android:layout_marginVertical="40dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="30dp">
 
             <Spinner
                 android:id="@+id/spinnerCookerMode"
@@ -47,7 +48,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Number of people"
-            android:inputType="number"/>
+            android:inputType="number"
+            android:gravity="center"/>
 
         <EditText
             android:id="@+id/etRecipe"
