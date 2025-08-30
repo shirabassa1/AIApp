@@ -99,6 +99,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     etNumPeople.setError("Enter a number");
                     error = true;
                 }
+                else if (Integer.parseInt(numPeople) <= 0)
+                {
+                    etNumPeople.setError("Enter a positive number");
+                    error = true;
+                }
 
                 if (error)
                 {
