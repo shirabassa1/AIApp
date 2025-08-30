@@ -1,5 +1,6 @@
 package com.example.aiapp;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -8,18 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
 {
-    //I'm a starter/expert cooker. I wanna cook a ___ for _ people. Send me a recipe - Make it simple/as few ingredients as possible/fancy. Include the ingredients I need and the whole process.
+    //I'm a _ cooker. I wanna make a _ for _ people. Send me a recipe - Make it _. Include the ingredients I need and the whole process.
     private String prompt;
 
     private String[] cookerOptions;
@@ -34,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private String cookerMode, recipeType;
 
+    private GeminiManager geminiManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -45,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void init()
     {
+        geminiManager = GeminiManager.getInstance();
+
         cookerOptions = getResources().getStringArray(R.array.cooker_options);
         recipeTypes = getResources().getStringArray(R.array.recipe_types);
 
@@ -54,6 +52,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         etRecipe = findViewById(R.id.etRecipe);
         btnGenerate = findViewById(R.id.btnGenerate);
         tvRecipe = findViewById(R.id.tvRecipe);
+
+        tvRecipe.setVisibility(View.GONE);
+        tvRecipe.setMovementMethod(new android.text.method.ScrollingMovementMethod());
+        tvRecipe.setVerticalScrollBarEnabled(true);
 
         createSpinners();
         createButton();
@@ -81,8 +83,31 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View view)
             {
                 prompt = createPrompt();
-                tvRecipe.setText(prompt);
-                tvRecipe.setVisibility(View.VISIBLE);
+
+                ProgressDialog pd = new ProgressDialog(MainActivity.this);
+                pd.setTitle("Sent Prompt");
+                pd.setMessage("Waiting for response...");
+                pd.setCancelable(false);
+                pd.show();
+
+                geminiManager.sendTextPrompt(MainActivity.this, prompt, new GeminiCallback()
+                {
+                    @Override
+                    public void onSuccess(String result)
+                    {
+                        tvRecipe.setText(result);
+                        pd.dismiss();
+                        tvRecipe.scrollTo(0, 0);
+                        tvRecipe.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable error)
+                    {
+                        pd.dismiss();
+                        btnGenerate.setError("Failed to prompt Gemini");
+                    }
+                });
             }
         });
     }
@@ -90,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String createPrompt()
     {
         return "I'm a " + cookerMode + " cooker. " +
-                "I wanna cook a " + etRecipe.getText().toString() + " " +
+                "I wanna make a " + etRecipe.getText().toString() + " " +
                 "for " + etNumPeople.getText().toString() + " people. " +
                 "Send me a recipe - " +
                 "Make it " + recipeType + ". " +
