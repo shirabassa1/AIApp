@@ -154,21 +154,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 "Make it " + recipeType + ". " +
                 "Include the ingredients I need and the whole process." +
                 "If " + recipe + " is not a valid dish name send me the word '" + ERROR_FLAG + "'";
-}
+    }
 
-@Override
-public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
-{
-if (adapterView == spinnerCookerMode)
-{
-    cookerMode = cookerOptions[i];
-}
-else if (adapterView == spinnerRecipeType)
-{
-    recipeType = recipeTypes[i];
-}
-}
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
+    {
+        if (adapterView == spinnerCookerMode)
+        {
+            cookerMode = cookerOptions[i];
+        }
+        else if (adapterView == spinnerRecipeType)
+        {
+            recipeType = recipeTypes[i];
+        }
+    }
 
-@Override
-public void onNothingSelected(AdapterView<?> adapterView) {}
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {}
 }
